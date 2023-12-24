@@ -1,7 +1,7 @@
 ﻿param (
     [string]$uninstallFolder = [System.IO.Path]::GetDirectoryName($PSCommandPath)
 )
-$createRAMDiskPath = Join-Path $uninstallFolder -ChildPath СreateRAMDisk.ps1 
+$createRAMDiskPath = Join-Path $uninstallFolder -ChildPath CreateRAMDisk.ps1 
 $stopRAMDisksPath = Join-Path $uninstallFolder -ChildPath StopRAMDisks.ps1 
 
 .\StopRAMDisks.ps1

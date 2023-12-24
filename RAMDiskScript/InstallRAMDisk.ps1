@@ -15,7 +15,7 @@ else
 
 $logPath= Join-Path $installFolder -ChildPath log.txt 
 
-$createRAMDiskPath = Join-Path $installFolder -ChildPath СreateRAMDisk.ps1 
+$createRAMDiskPath = Join-Path $installFolder -ChildPath CreateRAMDisk.ps1 
 $stopRAMDisksPath = Join-Path $installFolder -ChildPath StopRAMDisks.ps1 
 $uninstallRAMDisksPath = Join-Path $installFolder -ChildPath UninstallRAMDisks.ps1
 $installRAMDiskPath = Join-Path $installFolder -ChildPath InstallRAMDisk.ps1
@@ -36,7 +36,7 @@ if((Get-Item -LiteralPath $installFolder).FullName -ine (Get-Item -LiteralPath $
     Copy-Item -Path (Split-Path $pSScriptRegistration -Leaf) -Destination $pSScriptRegistration -Force
 }
 
-.\СreateRAMDisk.ps1 -diskLetter $diskLetter -diskSize $diskSize -logPath $logPath
+.\CreateRAMDisk.ps1 -diskLetter $diskLetter -diskSize $diskSize -logPath $logPath
 
 $skripts =  .\PSScriptRegistration.ps1 -Action GetAll -State Startup
 $createRAMDiskItem = Get-Item -LiteralPath $createRAMDiskPath
