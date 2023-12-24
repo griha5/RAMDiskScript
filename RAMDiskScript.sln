@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RAMDiskScript", "RAMDiskScript", "{CBC135EE-140F-4763-AC50-AFCF943E4BE1}"
+	ProjectSection(SolutionItems) = preProject
+		RAMDiskScript\InstallRAMDisk.ps1 = RAMDiskScript\InstallRAMDisk.ps1
+		RAMDiskScript\PSScriptRegistration.ps1 = RAMDiskScript\PSScriptRegistration.ps1
+		RAMDiskScript\StopRAMDisks.ps1 = RAMDiskScript\StopRAMDisks.ps1
+		RAMDiskScript\UninstallRAMDisks.ps1 = RAMDiskScript\UninstallRAMDisks.ps1
+		RAMDiskScript\СreateRAMDisk.ps1 = RAMDiskScript\СreateRAMDisk.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64E974CB-D8A0-4586-B765-AC879925CFE5}
+	EndGlobalSection
+EndGlobal
