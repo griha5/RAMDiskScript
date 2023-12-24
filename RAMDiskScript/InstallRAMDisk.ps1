@@ -74,3 +74,5 @@ if(-not $unregScript)
 {
     .\PSScriptRegistration.ps1 -Action Registration -State Shutdown -CmdLine $stopRAMDisksPath -Parameters "-logPath `"${logPath}`""
 }
+
+gpupdate /force

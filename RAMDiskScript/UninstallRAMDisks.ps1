@@ -31,4 +31,6 @@ foreach ($skript in $skripts)
 
 .\StopRAMDisks.ps1
 
+gpupdate /force
+
 Get-Disk
