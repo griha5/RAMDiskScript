@@ -10,7 +10,7 @@ if($diskLetter -match "^(?<letter>[a-zA-Z]):?$")
 }
 else
 {
-    throw "Буква диска должна быть большой или маленькой буквой латинского алфавита!"
+    throw "Disk letter must be a capital or small letter of the Latin alphabet!"
 }
 
 $logPath= Join-Path $installFolder -ChildPath log.txt 
@@ -38,17 +38,17 @@ if((Get-Item -LiteralPath $installFolder).FullName -ine (Get-Item -LiteralPath $
 
 .\CreateRAMDisk.ps1 -diskLetter $diskLetter -diskSize $diskSize -logPath $logPath
 
-$skripts =  .\PSScriptRegistration.ps1 -Action GetAll -State Startup
+$scripts =  .\PSScriptRegistration.ps1 -Action GetAll -State Startup
 $createRAMDiskItem = Get-Item -LiteralPath $createRAMDiskPath
 $unregScript = $null
-foreach ($skript in $skripts) 
+foreach ($script in $scripts) 
 {
-    if((Test-Path $skript["cmdLine"]) -and    
-        (Get-Item -LiteralPath $skript["cmdLine"]).FullName -ieq $createRAMDiskItem.FullName -and 
-        $skript["parameters"] -match "\s*-diskLetter\s+(?<letter>[a-zA-Z]):?\s+" -and
+    if((Test-Path $script["cmdLine"]) -and    
+        (Get-Item -LiteralPath $script["cmdLine"]).FullName -ieq $createRAMDiskItem.FullName -and 
+        $script["parameters"] -match "\s*-diskLetter\s+(?<letter>[a-zA-Z]):?\s+" -and
         $Matches["letter"] -ieq $diskLetter)
     {
-        $unregScript = $skript      
+        $unregScript = $script      
     }
 }
 
@@ -59,15 +59,15 @@ if(-not -not $unregScript)
 
 .\PSScriptRegistration.ps1 -Action Registration -State Startup -CmdLine $createRAMDiskPath -Parameters "-diskLetter ${diskLetter}: -diskSize ${diskSize} -logPath `"${logPath}`""
 
-$skripts =  .\PSScriptRegistration.ps1 -Action GetAll -State Shutdown
+$scripts =  .\PSScriptRegistration.ps1 -Action GetAll -State Shutdown
 $createRAMDiskItem = Get-Item -LiteralPath $createRAMDiskPath
 $unregScript = $null
-foreach ($skript in $skripts) 
+foreach ($script in $scripts) 
 {
-    if((Test-Path $skript["cmdLine"]) -and    
-        (Get-Item -LiteralPath $skript["cmdLine"]).FullName -ieq $stopRAMDisksPath.FullName)
+    if((Test-Path $script["cmdLine"]) -and    
+        (Get-Item -LiteralPath $script["cmdLine"]).FullName -ieq $stopRAMDisksPath.FullName)
     {
-        $unregScript = $skript      
+        $unregScript = $script      
     }
 }
 if(-not $unregScript)

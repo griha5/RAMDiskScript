@@ -5,8 +5,6 @@
 $diskPath="ramdisk:RAM-disk-$diskLetter.vhdx"
 $targetName="target-RAM-disks"
 
-# Инициализация массива с идентификаторами инициаторов
-
 function Write-OutputToFile {
     param (
         [Parameter(ValueFromPipeline=$true)]
@@ -33,7 +31,7 @@ function Write-OutputToFile {
 $target2 = Get-IscsiServerTarget -ComputerName localhost | Where TargetName -EQ $targetName
 
 if($target2 -ne $null){
-    "Удаление таргета ${target2.TargetName}" | Write-OutputToFile
+    "Removing target ${target2.TargetName}" | Write-OutputToFile
     Remove-IscsiServerTarget -TargetName $target2.TargetName -ComputerName localhost
 }
 

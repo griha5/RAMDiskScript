@@ -1,21 +1,20 @@
 ﻿param (
     [Parameter(Mandatory=$true)]
-    [string]$Action,
+    [string]$Action,       # Action: "Registration", "Unregistration", or "GetAll"
     [Parameter(Mandatory=$true)]
-    [string]$State,
-    [string]$CmdLine,
-    [string]$Parameters,
-    [string]$InputFile, 
-    [string]$OutputFile
+    [string]$State,        # State: "Startup" or "Shutdown"
+    [string]$CmdLine,      # Command line
+    [string]$Parameters,   # Parameters
+    [string]$InputFile,    # Input file
+    [string]$OutputFile    # Output file
 )
 
-
-# Проверяем значение параметра $Action
+# Check the value of the $Action parameter
 if ($Action -eq "Registration" -or $Action -eq "Unregistration") 
 {
     if(-not $CmdLine)
     {
-        throw "Значение параметра 'CmdLine' должно быть задано для значений параметра 'Action' Registration' или 'Unregistration'"
+        throw "The 'CmdLine' parameter must be specified for 'Registration' or 'Unregistration' actions."
     }
 
     if($Parameters -eq $null)
@@ -29,15 +28,15 @@ if ($Action -eq "Registration" -or $Action -eq "Unregistration")
     }
 
 }
-elseif ( $Action -ne "GetAll")
+elseif ($Action -ne "GetAll")
 {
-    throw "Значение параметра 'Action' должно быть 'Registration', 'Unregistration' или 'GetAll'."
+    throw "The 'Action' parameter must be 'Registration', 'Unregistration', or 'GetAll'."
 }
 
-# Проверяем значение параметра $State
+# Check the value of the $State parameter
 if ($State -ne "Startup" -and $State -ne "Shutdown") 
 {
-    throw "Значение параметра 'State' должно быть 'Startup' или 'Shutdown'."
+    throw "The 'State' parameter must be 'Startup' or 'Shutdown'."
 }
 
 if(-not $InputFile)
@@ -45,33 +44,33 @@ if(-not $InputFile)
     $InputFile = Join-Path -Path $env:SystemRoot -ChildPath "System32\GroupPolicy\Machine\Scripts\psscripts.ini"
 }
 
-# Читаем содержимое файла psscripts.ini
+# Read the contents of the psscripts.ini file
 $psscriptsContent = Get-Content -Path $InputFile -Raw
 
-# Создаем Hashtable для хранения блоков
+# Create a Hashtable to store blocks
 $blocks = @{}
 
-# Инициализируем переменные для хранения текущего блока и его содержимого
+# Initialize variables to store the current block and its content
 $currentBlock = ""
 $blockContent = @()
 $blockNames = @()
 
-# Разделяем содержимое файла на строки
+# Split the content of the file into lines
 $lines = $psscriptsContent -split "`r`n"
 
-# Проверяем, является ли последняя строка пустой
+# Check if the last line is empty
 if ($lines[-1] -eq "") 
 {
-    # Если последняя строка пустая, удаляем ее
+    # If the last line is empty, remove it
     $lines = $lines[0..($lines.Length - 2)]
 }
 
-# Пройдем по каждой строке в файле
+# Iterate through each line in the file
 foreach ($line in $lines) 
 {
     if ($line -match "^\[(.+)\]") 
     {
-        # Начало нового блока
+        # Start of a new block
         $currentBlock = $Matches[1]
         $blockNames += $currentBlock
         $blocks[$currentBlock] = @()
@@ -82,14 +81,12 @@ foreach ($line in $lines)
     }
 }
 
-# Имя блока полученное из $State
+# Name of the block obtained from $State
 $stateBlockName = $State
 
-# Определяем действие в зависимости от значения параметра -Action
+# Determine the action based on the value of the -Action parameter
 if ($Action -eq "GetAll") 
 {
-
-
     $result=@()
 
     if($blocks.ContainsKey($stateBlockName))
@@ -108,11 +105,11 @@ if ($Action -eq "GetAll")
                 $parametersBody = ""
                 foreach ($line2 in $existingBlock) 
                 {
-                        if ($line2 -match "^${tempNumber}Parameters=(?<parametersBody>.*)") 
-                        {
-                            $parametersBody = $Matches["parametersBody"]
-                            break
-                        }                             
+                    if ($line2 -match "^${tempNumber}Parameters=(?<parametersBody>.*)") 
+                    {
+                        $parametersBody = $Matches["parametersBody"]
+                        break
+                    }                             
                 }
 
                 $cmdAndParam =@{}
@@ -126,8 +123,9 @@ if ($Action -eq "GetAll")
 
     return $result
 }
-elseif ($Action -eq "Registration") {
-    # Выполняется действие для регистрации
+elseif ($Action -eq "Registration") 
+{
+    # Performing the action for registration
 
     $blockNames = @($blockNames | Where-Object { $_ -ne $stateBlockName })
     $blockNames += @($stateBlockName)    
@@ -136,14 +134,14 @@ elseif ($Action -eq "Registration") {
 
     if (-not $blocks.ContainsKey($stateBlockName)) 
     {
-        # Блок '$stateBlockName' отсутствует.
-        # Создаем блок с именем, полученным из $State, и добавляем две строки
+        # Block '$stateBlockName' is absent.
+        # Create a block with the name obtained from $State and add two lines
         $blocks[$stateBlockName] = $updatedBlock
     } 
     else
     {
-        # Блок '$stateBlockName' уже существует.
-        # Читаем строки из существующего блока и обновляем их
+        # Block '$stateBlockName' already exists.
+        # Read lines from the existing block and update them
         $existingBlock = $blocks[$stateBlockName]
 
         foreach ($line in $existingBlock) 
@@ -166,8 +164,8 @@ elseif ($Action -eq "Registration") {
 } 
 elseif ($Action -eq "Unregistration") 
 {
-    # Выполняется действие для отмены регистрации.
-    # Читаем строки из существующего блока и обновляем их
+    # Performing the action for unregistration.
+    # Read lines from the existing block and update them
     if($blocks.ContainsKey($stateBlockName))
     {
         $existingBlock = $blocks[$stateBlockName]
@@ -185,11 +183,11 @@ elseif ($Action -eq "Unregistration")
                     $parametersBody = ""
                     foreach ($line2 in $existingBlock) 
                     {
-                            if ($line2 -match "^${tempNumber}Parameters=(?<parametersBody>.*)") 
-                            {
-                                $parametersBody = $Matches["parametersBody"]
-                                break
-                            }                             
+                        if ($line2 -match "^${tempNumber}Parameters=(?<parametersBody>.*)") 
+                        {
+                            $parametersBody = $Matches["parametersBody"]
+                            break
+                        }                             
                     }
 
                     if($parametersBody.Trim() -eq $Parameters.Trim())
@@ -218,7 +216,8 @@ elseif ($Action -eq "Unregistration")
                         }                            
                         $updatedBlock += "$tempNumber$str=$(([string]$body).Trim())"
                     }
-                } elseif ( !($line -match "^\s*$") ) 
+                } 
+                elseif ( !($line -match "^\s*$") ) 
                 {
                     $updatedBlock += $line
                 }
@@ -233,15 +232,15 @@ elseif ($Action -eq "Unregistration")
             {
                 $blocks.Remove($stateBlockName);
             }
-
-        } else
+        } 
+        else
         {
-            # Совпадение в блоке $stateBlockName отсутствует, разрегестрация невозможна
+            # Matching in the $stateBlockName block is absent, unregistration is not possible
         }        
     }
 }
 
-# Создаем новый файл "psscripts2.ini" с блоками, начиная с блока с пустым заглавием
+# Create a new file "psscripts2.ini" with blocks, starting from the block with an empty heading
 $psscripts2File = Join-Path -Path $env:SystemRoot -ChildPath "System32\GroupPolicy\Machine\Scripts\psscripts2.ini"
 $psscripts2Content = @()
 
@@ -259,7 +258,7 @@ foreach ($blockName in $blockNames)
     }
 }
 
-# Очищаем атрибут Hidden для выходного ini-файла, если есть файл и он имеет этот атрибут
+# Clear the Hidden attribute for the output ini file if there is a file and it has this attribute
 if (Test-Path $OutputFile -PathType Leaf) 
 {
     $file = Get-Item -Path $OutputFile -Force
@@ -269,8 +268,8 @@ if (Test-Path $OutputFile -PathType Leaf)
         $file.Attributes = $file.Attributes -band (-bnot [System.IO.FileAttributes]::Hidden)
     }
 }
-# Сохраняем результат в выходной ini-файл
+# Save the result to the output ini file
 $psscripts2Content -join "`r`n" | Set-Content -Path $OutputFile -Encoding Unicode  
 
-# Устанавливаем атрибут Hidden
+# Set the Hidden attribute
 (Get-Item -Path $OutputFile).Attributes = [System.IO.FileAttributes]::Hidden
