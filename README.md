@@ -28,8 +28,9 @@ and provides PowerShell scripts for managing RAM virtual disks in the Windows Se
    and registered. Upon system startup, the disks will be restored, and upon system shutdown, 
    they will be automatically removed to expedite shutdown.
 
-   To unregister disks from the system, execute the command from the "c:\Program Files\RAMDiskScript" folder:
+   To unregister disks from the system, execute the following command from the 'c:\Program Files\RAMDiskScript' folder:
 ```powershell
+cd "c:\Program Files\RAMDiskScript"
 .\UninstallRAMDisks.ps1
 ```
 
