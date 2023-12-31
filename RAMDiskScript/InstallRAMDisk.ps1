@@ -1,7 +1,7 @@
 ﻿param (
     [string]$diskLetter,
     [long]$diskSize,
-    [string]$installFolder = $(Join-Path -Path $env:ProgramFiles -ChildPath "RAM")
+    [string]$installFolder = $(Join-Path -Path $env:ProgramFiles -ChildPath "RAMDiskScript")
 )
 
 if($diskLetter -match "^(?<letter>[a-zA-Z]):?$")
@@ -20,6 +20,7 @@ $stopRAMDisksPath = Join-Path $installFolder -ChildPath StopRAMDisks.ps1
 $uninstallRAMDisksPath = Join-Path $installFolder -ChildPath UninstallRAMDisks.ps1
 $installRAMDiskPath = Join-Path $installFolder -ChildPath InstallRAMDisk.ps1
 $pSScriptRegistration = Join-Path $installFolder -ChildPath PSScriptRegistration.ps1
+$gpoIniUpdate = Join-Path $installFolder -ChildPath GpoIniUpdate.ps1
 
 if(-not (Test-Path $installFolder))
 {
@@ -34,6 +35,7 @@ if((Get-Item -LiteralPath $installFolder).FullName -ine (Get-Item -LiteralPath $
     Copy-Item -Path (Split-Path $uninstallRAMDisksPath -Leaf) -Destination $uninstallRAMDisksPath -Force
     Copy-Item -Path (Split-Path $installRAMDiskPath -Leaf) -Destination $installRAMDiskPath -Force
     Copy-Item -Path (Split-Path $pSScriptRegistration -Leaf) -Destination $pSScriptRegistration -Force
+    Copy-Item -Path (Split-Path $gpoIniUpdate -Leaf) -Destination $gpoIniUpdate -Force
 }
 
 .\CreateRAMDisk.ps1 -diskLetter $diskLetter -diskSize $diskSize -logPath $logPath
@@ -75,4 +77,5 @@ if(-not $unregScript)
     .\PSScriptRegistration.ps1 -Action Registration -State Shutdown -CmdLine $stopRAMDisksPath -Parameters "-logPath `"${logPath}`""
 }
 
+.\GpoIniUpdate.ps1
 gpupdate /force

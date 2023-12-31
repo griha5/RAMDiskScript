@@ -45,7 +45,14 @@ if(-not $InputFile)
 }
 
 # Read the contents of the psscripts.ini file
-$psscriptsContent = Get-Content -Path $InputFile -Raw
+if (Test-Path $InputFile -PathType Leaf)
+{
+    $psscriptsContent = Get-Content -Path $InputFile -Raw
+}
+else
+{
+    $psscriptsContent = "`r`n"
+}
 
 # Create a Hashtable to store blocks
 $blocks = @{}
@@ -256,6 +263,12 @@ foreach ($blockName in $blockNames)
         $psscripts2Content += "[$blockName]"
         $psscripts2Content += $blocks[$blockName]
     }
+}
+
+$directory = [System.IO.Path]::GetDirectoryName($OutputFile)
+if (-not (Test-Path -Path $directory)) 
+{
+    New-Item -ItemType Directory -Path $directory -Force
 }
 
 # Clear the Hidden attribute for the output ini file if there is a file and it has this attribute
